@@ -1,7 +1,0 @@
-IS-913 Disenio de Compiladores
----- SALIDA DEL DOCUMENTO CON EL RESPECTIVO MACTH ----
-
-Secuencia de numeros: ['3', '27', '2022', '123', '845', '1', '42', '12', '1492', '0', '0', '1231233132']
-Caracteres Especiales: ['/', '&', '_', '(', '@']
-Vocales 3 o mas veces repetidas: ['a', 'e']
-Secuencia de numeros seguidos de letras: ['3a', '845metros', '1u', '0R', '0NG']
