@@ -2,7 +2,7 @@
 import re
 
 #Esto es para abrir y leer un archivo
-textfile = open('prueba.txt', 'r')
+textfile = open('Tarea 1\Ejercicio 3\prueba.txt', 'r')
 filetext = textfile.read()
 textfile.close()
 
@@ -12,7 +12,7 @@ print(matches)
 # Metodo para devolver los caracteres especiales
 matches2 = re.findall(r'([@_!#$%^&*()<>?\/\|}{~:])+', filetext)
 print(matches2)
-# Metodo para devolver3 o más vocales repetidas
+# Metodo para devolver 3 o más vocales repetidas
 matches3 = re.findall(r'([aeiou]).*\1.*\1', filetext)
 print(matches3)
 # Metodo para devolver secuencia de números seguidos de letras
