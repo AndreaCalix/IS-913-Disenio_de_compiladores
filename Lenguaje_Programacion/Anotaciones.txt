@@ -4,8 +4,6 @@ PASOS:
 1. crear el archivo shell.py para comunicacion con el lenguaje 
 2. luego crear lex, ubn lex  leera caracter por caracter y divide el texto en una lista de lo que conocemos como tokens
 3. crear un archivo basic.py que contendra todo el codigo basico para un lenguaje sencillo
-
-
 4. Hacer unha gramatica para nuestro lenguaje 
 
 exp : term((SUMA|MENOS) term)*

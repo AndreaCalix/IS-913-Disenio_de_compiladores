@@ -11,3 +11,10 @@ Integrantes:
 - Zayra Yadira Canales 20131017452
 
 [Enlace: Informe Proyecto_Calculadora de Operaciones](https://docs.google.com/document/d/1Aj0GGIyIwYcQJso2_3sTnca1LZ5GD30FQUX5SEYFESk/edit?usp=sharing)
+
+Videos para Calculadora 
+https://youtube.com/playlist?list=PLBOh8f9FoHHg7Ed_4yKhIbq4lIJAlonn8
+
+Videos para creacion de Lenguaje 
+https://youtube.com/playlist?list=PLZQftyCk7_SdoVexSmwy_tBgs7P0b97yD
+
