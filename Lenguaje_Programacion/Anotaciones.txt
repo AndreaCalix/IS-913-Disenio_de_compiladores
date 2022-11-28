@@ -1,4 +1,4 @@
-Basado en Basic
+
 Se puede sumar, multiplicar, restar, dividir, usar floats, considerar parentesis, omitir parentesis, operar con numeros negativos
 PASOS:
 1. crear el archivo shell.py para comunicacion con el lenguaje 
@@ -10,9 +10,11 @@ exp : term((SUMA|MENOS) term)*
 term : factor((MULT|DIV)) factor)*
 factor : INT|FLOAT
 
-
 5. Construccion del arbol para la gramatica 
 6. Construir los nodos
 7. Convertir las reglas gramaticales en codigo 
+
+8. Hacer un interprete 
+para poder realizar las operaciones
 
 
