@@ -1,20 +1,18 @@
 
 Se puede sumar, multiplicar, restar, dividir, usar floats, considerar parentesis, omitir parentesis, operar con numeros negativos
-PASOS:
+
+################################    PASOS  ###########################################################3
+
 1. crear el archivo shell.py para comunicacion con el lenguaje 
 2. luego crear lex, ubn lex  leera caracter por caracter y divide el texto en una lista de lo que conocemos como tokens
 3. crear un archivo basic.py que contendra todo el codigo basico para un lenguaje sencillo
 4. Hacer unha gramatica para nuestro lenguaje 
-
-exp : term((SUMA|MENOS) term)*
-term : factor((MULT|DIV)) factor)*
-factor : INT|FLOAT
-
 5. Construccion del arbol para la gramatica 
 6. Construir los nodos
 7. Convertir las reglas gramaticales en codigo 
-
 8. Hacer un interprete 
 para poder realizar las operaciones
+9. trabajo en la deteccion de errores
+10. Agregar la operacion de potencia 
 
-
+HASTA EL MOMNETO EL LENGUAJE PUEDE REALIZAR OPRACIONES DE SUMA, RESTA, DIV, MUT, POTENCIA

@@ -81,9 +81,9 @@ TT_DIV      = 'DIV'
 TT_LPAREN   = 'LPAREN' #(
 TT_RPAREN   = 'RPAREN' #)
 TT_EOF		= 'EOF' # final del archivo
+TT_POT      = 'POT' #potencia
 
 # ---------------------- crear una clase TOKENS -------------------------------
-
 class Token:
 		def __init__(self, type_, value=None, pos_start=None, pos_end=None):
 				self.type = type_
@@ -135,6 +135,9 @@ class Lexer:
 								self.advance()
 						elif self.current_char == '/':
 								tokens.append(Token(TT_DIV, pos_start=self.pos))
+								self.advance()
+						elif self.current_char == '^':
+								tokens.append(Token(TT_POT, pos_start=self.pos))
 								self.advance()
 						elif self.current_char == '(':
 								tokens.append(Token(TT_LPAREN, pos_start=self.pos))
@@ -250,19 +253,13 @@ class Parser:
 			))
 		return res
 
-	###################################
+	############### ANALIZADOR  ####################
 
-	def factor(self):
+	def atom(self):
 		res = ParseResult()
 		tok = self.current_tok
-
-		if tok.type in (TT_SUMA, TT_RESTA):
-			res.register(self.advance())
-			factor = res.register(self.factor())
-			if res.error: return res
-			return res.success(UnaryOpNode(tok, factor))
 		
-		elif tok.type in (TT_INT, TT_FLOAT):
+		if tok.type in (TT_INT, TT_FLOAT):
 			res.register(self.advance())
 			return res.success(NumberNode(tok))
 
@@ -278,11 +275,25 @@ class Parser:
 					self.current_tok.pos_start, self.current_tok.pos_end,
 					"Expected ')'"
 				))
-
 		return res.failure(InvalidSyntaxError(
-			tok.pos_start, tok.pos_end,
-			"Expected int or float"
+		tok.pos_start, tok.pos_end,
+		"Expected int or float"
 		))
+	
+	def power(self):
+		return self.bin_op(self.atom, (TT_POT, ), self.factor)
+	
+	def factor(self):
+		res = ParseResult()
+		tok = self.current_tok
+
+		if tok.type in (TT_SUMA, TT_RESTA):
+			res.register(self.advance())
+			factor = res.register(self.factor())
+			if res.error: return res
+			return res.success(UnaryOpNode(tok, factor))
+		
+		return self.power()
 
 	def term(self):
 		return self.bin_op(self.factor, (TT_MUL, TT_DIV))
@@ -292,19 +303,24 @@ class Parser:
 
 	###################################
 
-	def bin_op(self, func, ops):
+	def bin_op(self, func_a, ops, func_b = None):
+		if func_b == None:
+			func_b = func_a
+			
+		
 		res = ParseResult()
-		left = res.register(func())
+		left = res.register(func_a())
 		if res.error: return res
 
 		while self.current_tok.type in ops:
 			op_tok = self.current_tok
 			res.register(self.advance())
-			right = res.register(func())
+			right = res.register(func_b())
 			if res.error: return res
 			left = BinOpNode(left, op_tok, right)
 
 		return res.success(left)
+	
 #######################################
 # TIEMPO DE EJECUCION
 #######################################		
@@ -363,6 +379,10 @@ class Number:
 				return None, RTError(other.pos_start, other.pos_end,'Division por cero', self.context) 
 			
 			return Number(self.value / other.value).set_context(self.context), None
+	
+	def powed_by(self, other):
+		if isinstance(other, Number):
+			return Number(self.value ** other.value).set_context(self.context), None #operador de potencia en python es **
 		
 	def __repr__(self):
 		return str(self.value)
@@ -414,6 +434,9 @@ class Interpreter:
 		elif node.op_tok.type ==TT_DIV:
 			result, error = left.dived_by(right)
 		
+		elif node.op_tok.type ==TT_POT:
+			result, error = left.powed_by(right)
+			
 		if error:
 			return res.failure(error)
 		else:

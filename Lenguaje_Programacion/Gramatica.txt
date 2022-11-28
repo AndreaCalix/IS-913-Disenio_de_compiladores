@@ -1,0 +1,14 @@
+###################################3####  GRAMATICA ###############################################
+
+exp : term((SUMA|MENOS) term)*
+term : factor((MULT|DIV)) factor)*
+
+factor : (SUMA|RESTA) factor
+pot : atom (POT factor)*
+
+atom : INT|FLOAT
+atom : LPAREN expr RPAREN
+
+####################################################################################################
+
+NOTA>>>> la gramatica pasa al analizador para poder ser interpretada 
