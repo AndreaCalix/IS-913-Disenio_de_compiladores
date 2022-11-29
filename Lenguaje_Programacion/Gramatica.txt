@@ -1,14 +1,16 @@
 ###################################3####  GRAMATICA ###############################################
 
+exp : PALABRA_CLAVE : VAR IDENT IGUAL expr  \\\\\\\ variables
 exp : term((SUMA|MENOS) term)*
 term : factor((MULT|DIV)) factor)*
 
 factor : (SUMA|RESTA) factor
 pot : atom (POT factor)*
 
-atom : INT|FLOAT
+atom : INT|FLOAT|IDENT
 atom : LPAREN expr RPAREN
 
 ####################################################################################################
 
 NOTA>>>> la gramatica pasa al analizador para poder ser interpretada 
+>>>>>>>> la asignacion de variables tendra la menos prioridad

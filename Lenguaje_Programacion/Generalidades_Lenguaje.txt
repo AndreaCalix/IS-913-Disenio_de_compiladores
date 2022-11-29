@@ -1,0 +1,20 @@
+
+######################################## VARIABLES ###################################################
+usar la palabra VAR para las variables 
+ej. VAR a = 10
+
+--------- >>>>>>>>> Tokens nuevos 
+IDENTIFICADOR = identificador
+LLAVE = palabra clave
+IGUAL = comparacion
+
+el nombre de la variable puede contener digitos minusculas y mayusculas y guiones
+
+
+
+
+################################## REPRESENTACION DE STRINGS DEL LENGUAJE ######################################
+"Texto"
+"Texto con \"cadena\""
+"Texto con \\ cadena \\"
+"Texto \n con \n cadena"
