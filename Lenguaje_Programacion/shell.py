@@ -1,7 +1,7 @@
 import basic
 
 while True:
-		text = input('BASIC > ')
+		text = input('GRUPO_#5 > ')
 		result, error = basic.run('<stdin>', text)
 
 		if error: print(error.as_string())

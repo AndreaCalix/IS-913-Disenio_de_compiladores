@@ -50,7 +50,7 @@ class RTError(Error):
 			pos = ctx.parent_entry_pos
 			ctx = ctx.parent
 
-		return 'Traceback (most recent call last):\n' + result
+		return 'Traceback (llamado mas recientemente):\n' + result
 
 ####################################### POSICION #######################################
 
@@ -469,7 +469,7 @@ class Number:
 			if other.value == 0:
 				return None, RTError(
 					other.pos_start, other.pos_end,
-					'Division by zero',
+					'Division por cero',
 					self.context
 				)
 
@@ -541,7 +541,7 @@ class Interpreter:
 		if not value:
 			return res.failure(RTError(
 				node.pos_start, node.pos_end,
-				f"'{var_name}' is not defined",
+				f"'{var_name}' no definido",
 				context
 			))
 
