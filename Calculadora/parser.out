@@ -1,0 +1,467 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> calc
+Rule 1     calc -> expression
+Rule 2     calc -> var_assign
+Rule 3     calc -> empty
+Rule 4     var_assign -> NAME EQUALS expression
+Rule 5     expression -> PLEFT expression PRIGHT
+Rule 6     expression -> CLEFT expression CRIGHT
+Rule 7     expression -> expression MULTIPLY expression
+Rule 8     expression -> expression DIVIDE expression
+Rule 9     expression -> expression PLUS expression
+Rule 10    expression -> expression MINUS expression
+Rule 11    expression -> INT
+Rule 12    expression -> FLOAT
+Rule 13    expression -> NAME
+Rule 14    empty -> <empty>
+
+Terminals, with rules where they appear
+
+CLEFT                : 6
+CRIGHT               : 6
+DIVIDE               : 8
+EQUALS               : 4
+FLOAT                : 12
+INT                  : 11
+MINUS                : 10
+MULTIPLY             : 7
+NAME                 : 4 13
+PLEFT                : 5
+PLUS                 : 9
+PRIGHT               : 5
+error                : 
+
+Nonterminals, with rules where they appear
+
+calc                 : 0
+empty                : 3
+expression           : 1 4 5 6 7 7 8 8 9 9 10 10
+var_assign           : 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . calc
+    (1) calc -> . expression
+    (2) calc -> . var_assign
+    (3) calc -> . empty
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+    (4) var_assign -> . NAME EQUALS expression
+    (14) empty -> .
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 9
+    $end            reduce using rule 14 (empty -> .)
+
+    calc                           shift and go to state 1
+    expression                     shift and go to state 2
+    var_assign                     shift and go to state 3
+    empty                          shift and go to state 4
+
+state 1
+
+    (0) S' -> calc .
+
+
+
+state 2
+
+    (1) calc -> expression .
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    $end            reduce using rule 1 (calc -> expression .)
+    MULTIPLY        shift and go to state 10
+    DIVIDE          shift and go to state 11
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+
+
+state 3
+
+    (2) calc -> var_assign .
+
+    $end            reduce using rule 2 (calc -> var_assign .)
+
+
+state 4
+
+    (3) calc -> empty .
+
+    $end            reduce using rule 3 (calc -> empty .)
+
+
+state 5
+
+    (5) expression -> PLEFT . expression PRIGHT
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 14
+
+state 6
+
+    (6) expression -> CLEFT . expression CRIGHT
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 16
+
+state 7
+
+    (11) expression -> INT .
+
+    MULTIPLY        reduce using rule 11 (expression -> INT .)
+    DIVIDE          reduce using rule 11 (expression -> INT .)
+    PLUS            reduce using rule 11 (expression -> INT .)
+    MINUS           reduce using rule 11 (expression -> INT .)
+    $end            reduce using rule 11 (expression -> INT .)
+    PRIGHT          reduce using rule 11 (expression -> INT .)
+    CRIGHT          reduce using rule 11 (expression -> INT .)
+
+
+state 8
+
+    (12) expression -> FLOAT .
+
+    MULTIPLY        reduce using rule 12 (expression -> FLOAT .)
+    DIVIDE          reduce using rule 12 (expression -> FLOAT .)
+    PLUS            reduce using rule 12 (expression -> FLOAT .)
+    MINUS           reduce using rule 12 (expression -> FLOAT .)
+    $end            reduce using rule 12 (expression -> FLOAT .)
+    PRIGHT          reduce using rule 12 (expression -> FLOAT .)
+    CRIGHT          reduce using rule 12 (expression -> FLOAT .)
+
+
+state 9
+
+    (13) expression -> NAME .
+    (4) var_assign -> NAME . EQUALS expression
+
+    MULTIPLY        reduce using rule 13 (expression -> NAME .)
+    DIVIDE          reduce using rule 13 (expression -> NAME .)
+    PLUS            reduce using rule 13 (expression -> NAME .)
+    MINUS           reduce using rule 13 (expression -> NAME .)
+    $end            reduce using rule 13 (expression -> NAME .)
+    EQUALS          shift and go to state 17
+
+
+state 10
+
+    (7) expression -> expression MULTIPLY . expression
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 18
+
+state 11
+
+    (8) expression -> expression DIVIDE . expression
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 19
+
+state 12
+
+    (9) expression -> expression PLUS . expression
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 20
+
+state 13
+
+    (10) expression -> expression MINUS . expression
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 21
+
+state 14
+
+    (5) expression -> PLEFT expression . PRIGHT
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    PRIGHT          shift and go to state 22
+    MULTIPLY        shift and go to state 10
+    DIVIDE          shift and go to state 11
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+
+
+state 15
+
+    (13) expression -> NAME .
+
+    PRIGHT          reduce using rule 13 (expression -> NAME .)
+    MULTIPLY        reduce using rule 13 (expression -> NAME .)
+    DIVIDE          reduce using rule 13 (expression -> NAME .)
+    PLUS            reduce using rule 13 (expression -> NAME .)
+    MINUS           reduce using rule 13 (expression -> NAME .)
+    CRIGHT          reduce using rule 13 (expression -> NAME .)
+    $end            reduce using rule 13 (expression -> NAME .)
+
+
+state 16
+
+    (6) expression -> CLEFT expression . CRIGHT
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    CRIGHT          shift and go to state 23
+    MULTIPLY        shift and go to state 10
+    DIVIDE          shift and go to state 11
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+
+
+state 17
+
+    (4) var_assign -> NAME EQUALS . expression
+    (5) expression -> . PLEFT expression PRIGHT
+    (6) expression -> . CLEFT expression CRIGHT
+    (7) expression -> . expression MULTIPLY expression
+    (8) expression -> . expression DIVIDE expression
+    (9) expression -> . expression PLUS expression
+    (10) expression -> . expression MINUS expression
+    (11) expression -> . INT
+    (12) expression -> . FLOAT
+    (13) expression -> . NAME
+
+    PLEFT           shift and go to state 5
+    CLEFT           shift and go to state 6
+    INT             shift and go to state 7
+    FLOAT           shift and go to state 8
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 24
+
+state 18
+
+    (7) expression -> expression MULTIPLY expression .
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    MULTIPLY        reduce using rule 7 (expression -> expression MULTIPLY expression .)
+    DIVIDE          reduce using rule 7 (expression -> expression MULTIPLY expression .)
+    PLUS            reduce using rule 7 (expression -> expression MULTIPLY expression .)
+    MINUS           reduce using rule 7 (expression -> expression MULTIPLY expression .)
+    $end            reduce using rule 7 (expression -> expression MULTIPLY expression .)
+    PRIGHT          reduce using rule 7 (expression -> expression MULTIPLY expression .)
+    CRIGHT          reduce using rule 7 (expression -> expression MULTIPLY expression .)
+
+  ! MULTIPLY        [ shift and go to state 10 ]
+  ! DIVIDE          [ shift and go to state 11 ]
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+
+
+state 19
+
+    (8) expression -> expression DIVIDE expression .
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    MULTIPLY        reduce using rule 8 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 8 (expression -> expression DIVIDE expression .)
+    PLUS            reduce using rule 8 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 8 (expression -> expression DIVIDE expression .)
+    $end            reduce using rule 8 (expression -> expression DIVIDE expression .)
+    PRIGHT          reduce using rule 8 (expression -> expression DIVIDE expression .)
+    CRIGHT          reduce using rule 8 (expression -> expression DIVIDE expression .)
+
+  ! MULTIPLY        [ shift and go to state 10 ]
+  ! DIVIDE          [ shift and go to state 11 ]
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+
+
+state 20
+
+    (9) expression -> expression PLUS expression .
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    PLUS            reduce using rule 9 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 9 (expression -> expression PLUS expression .)
+    $end            reduce using rule 9 (expression -> expression PLUS expression .)
+    PRIGHT          reduce using rule 9 (expression -> expression PLUS expression .)
+    CRIGHT          reduce using rule 9 (expression -> expression PLUS expression .)
+    MULTIPLY        shift and go to state 10
+    DIVIDE          shift and go to state 11
+
+  ! MULTIPLY        [ reduce using rule 9 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 9 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+
+
+state 21
+
+    (10) expression -> expression MINUS expression .
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    PLUS            reduce using rule 10 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 10 (expression -> expression MINUS expression .)
+    $end            reduce using rule 10 (expression -> expression MINUS expression .)
+    PRIGHT          reduce using rule 10 (expression -> expression MINUS expression .)
+    CRIGHT          reduce using rule 10 (expression -> expression MINUS expression .)
+    MULTIPLY        shift and go to state 10
+    DIVIDE          shift and go to state 11
+
+  ! MULTIPLY        [ reduce using rule 10 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 10 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+
+
+state 22
+
+    (5) expression -> PLEFT expression PRIGHT .
+
+    MULTIPLY        reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+    DIVIDE          reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+    PLUS            reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+    MINUS           reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+    $end            reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+    PRIGHT          reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+    CRIGHT          reduce using rule 5 (expression -> PLEFT expression PRIGHT .)
+
+
+state 23
+
+    (6) expression -> CLEFT expression CRIGHT .
+
+    MULTIPLY        reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+    DIVIDE          reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+    PLUS            reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+    MINUS           reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+    $end            reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+    PRIGHT          reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+    CRIGHT          reduce using rule 6 (expression -> CLEFT expression CRIGHT .)
+
+
+state 24
+
+    (4) var_assign -> NAME EQUALS expression .
+    (7) expression -> expression . MULTIPLY expression
+    (8) expression -> expression . DIVIDE expression
+    (9) expression -> expression . PLUS expression
+    (10) expression -> expression . MINUS expression
+
+    $end            reduce using rule 4 (var_assign -> NAME EQUALS expression .)
+    MULTIPLY        shift and go to state 10
+    DIVIDE          shift and go to state 11
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+
