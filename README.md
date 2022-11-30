@@ -1,4 +1,4 @@
-# Proyecto Calculadora de Operaciones
+# Proyecto Calculadora de Operaciones && Lenguaje de Programacion
 ### IS-913-Diseño de Compiladores
 #### Grupo #5
 
@@ -10,7 +10,7 @@ Integrantes:
 - Lesly Mabely Argueta 20142030185
 - Zayra Yadira Canales 20131017452
 
-[Enlace: Informe Proyecto_Calculadora de Operaciones](https://docs.google.com/document/d/1Aj0GGIyIwYcQJso2_3sTnca1LZ5GD30FQUX5SEYFESk/edit?usp=sharing)
+[Enlace: Informe Proyecto](https://docs.google.com/document/d/1Aj0GGIyIwYcQJso2_3sTnca1LZ5GD30FQUX5SEYFESk/edit?usp=sharing)
 
 Videos para Calculadora 
 https://youtube.com/playlist?list=PLBOh8f9FoHHg7Ed_4yKhIbq4lIJAlonn8

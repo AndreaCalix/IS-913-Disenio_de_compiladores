@@ -1,10 +1,10 @@
-####################################### IMPORTS #######################################
+
 from strings_with_arrows import *
 import string
 
 ####################################### CONSTANTES #######################################
 DIGITOS = '0123456789'
-LETRAS = string.ascii_letters #letras de la a - z
+LETRAS = string.ascii_letters
 LETRAS_DIGITOS = LETRAS + DIGITOS
 
 ####################################### ERRORES #######################################
@@ -23,15 +23,19 @@ class Error:
 
 class IllegalCharError(Error):
 	def __init__(self, pos_start, pos_end, details):
-		super().__init__(pos_start, pos_end, 'CARACTER ILEGAL', details)
+		super().__init__(pos_start, pos_end, 'Caracter Ilegal', details)
+
+class ExpectedCharError(Error):
+	def __init__(self, pos_start, pos_end, details):
+		super().__init__(pos_start, pos_end, 'Esperaba un caracter', details)
 
 class InvalidSyntaxError(Error):
 	def __init__(self, pos_start, pos_end, details=''):
-		super().__init__(pos_start, pos_end, 'SINTAXIS INVALIDA', details)
-# errores de division por cero
+		super().__init__(pos_start, pos_end, 'Sintaxis Invalida', details)
+
 class RTError(Error):
 	def __init__(self, pos_start, pos_end, details, context):
-		super().__init__(pos_start, pos_end, 'ERROR DE EJECUCION', details)
+		super().__init__(pos_start, pos_end, 'Error de Ejecucion', details)
 		self.context = context
 
 	def as_string(self):
@@ -50,7 +54,7 @@ class RTError(Error):
 			pos = ctx.parent_entry_pos
 			ctx = ctx.parent
 
-		return 'Traceback (llamado mas recientemente):\n' + result
+		return 'Traceback (llamada mas reciente):\n' + result
 
 ####################################### POSICION #######################################
 
@@ -77,24 +81,33 @@ class Position:
 
 ####################################### TOKENS #######################################
 
-TT_INT	= 'INT' #enteros
-TT_FLOAT   = 'FLOAT' #decimales
-TT_IDENTIFIER = 'IDENTIFIER' #identificador
-TT_KEYWORD	= 'KEYWORD' #palabras clave
-TT_SUMA   = 'SUMA'
-TT_RESTA  = 'RESTA'
+TT_INT = 'INT' #enteros 
+TT_FLOAT = 'FLOAT' #flotantes
+TT_IDENTIFIER = 'IDENTIFIER' #identificador 
+TT_LLAVE = 'LLAVE' #llave usada para identificar las palabras reservadas
+TT_SUMA  = 'SUMA'
+TT_MENOS = 'MENOS'
 TT_MUL = 'MUL'
 TT_DIV = 'DIV'
-TT_POT = 'POT' #potencia
-TT_EQ  = 'IGUAL' 
-TT_LPAREN  = 'LPAREN' #(
-TT_RPAREN  = 'RPAREN' #)
-TT_EOF	= 'EOF' #final de la linea
-#palabras reservadas
-KEYWORDS = [
-	'VAR'
+TT_POT = 'POT' #potencia 
+TT_EQ = 'EQ' #igual
+TT_LPAREN = 'LPAREN' #parentesis izquierdo
+TT_RPAREN  = 'RPAREN' #parentesis derecho
+TT_EE = 'EE' # comparacon ==
+TT_NE = 'NE' # diferente !=
+TT_LT = 'LT' # menor <
+TT_GT = 'GT' # mayor >
+TT_LTE = 'LTE' # menor igual <=
+TT_GTE = 'GTE' # mayor igual >=
+TT_EOF = 'EOF' # fin de linea como una bandera 
+
+PALABRAS_CLAVE = [
+	'VAR', #para variables
+	'AND', # &&
+	'OR', # |
+	'NOT' 
 ]
-# ---------------------- crear una clase TOKENS -------------------------------
+# en esta clase se trabaja con los tokens para que haya coincidencia al compararlos
 class Token:
 	def __init__(self, type_, value=None, pos_start=None, pos_end=None):
 		self.type = type_
@@ -107,7 +120,7 @@ class Token:
 
 		if pos_end:
 			self.pos_end = pos_end.copy()
-    #verifica si el  token coincide
+    #esta funcion se encarga de verificar si el token coincide 
 	def matches(self, type_, value):
 		return self.type == type_ and self.value == value
 	
@@ -116,37 +129,35 @@ class Token:
 		return f'{self.type}'
 
 ####################################### LEXER #######################################
-
 class Lexer:
 	def __init__(self, fn, text): #en el metodo de inicializacion debemos tomar el texto que estemos procesando
 		self.fn = fn
 		self.text = text
-		self.pos = Position(-1, 0, -1, fn, text)  #realizar un seguimiento de la posicion en donde estamos 
-		self.current_char = None #caracter actual
+		self.pos = Position(-1, 0, -1, fn, text) #realizar un seguimiento de la posicion en donde estamos 
+		self.current_char = None #caracter actual 
 		self.advance()
-	#metodo que avanzara al siguiente caracter
+	#este metodo se utiliza para avanzar al siguiente caracter
 	def advance(self):
 		self.pos.advance(self.current_char)
 		self.current_char = self.text[self.pos.idx] if self.pos.idx < len(self.text) else None
-    #metodo para la creacion de tokens
+    #metodo para generar tokens
 	def make_tokens(self):
 		tokens = []
 
 		while self.current_char != None:
-			if self.current_char in ' \t': #ignorar caracteres con espacios y tabulaciones
-				self.advance() #si hay caracteres con espacio o tabulaciones se llama la funcion advance para avanzar a otro caracter
-			#identifcar si el caracter actual esta en digitos
+			if self.current_char in ' \t': #ignora los espacios vacios y tabulaciones
+				self.advance()#si hay caracteres con espacio o tabulaciones se llama la funcion advance para avanzar a otro caracter
+			# identifcar si el caracter actual esta en digitos
 			elif self.current_char in DIGITOS:
 				tokens.append(self.make_number())
 			# identificar si son letras
 			elif self.current_char in LETRAS:
 				tokens.append(self.make_identifier())
-
 			elif self.current_char == '+':
 				tokens.append(Token(TT_SUMA, pos_start=self.pos))
 				self.advance()
 			elif self.current_char == '-':
-				tokens.append(Token(TT_RESTA, pos_start=self.pos))
+				tokens.append(Token(TT_MENOS, pos_start=self.pos))
 				self.advance()
 			elif self.current_char == '*':
 				tokens.append(Token(TT_MUL, pos_start=self.pos))
@@ -157,15 +168,22 @@ class Lexer:
 			elif self.current_char == '^':
 				tokens.append(Token(TT_POT, pos_start=self.pos))
 				self.advance()
-			elif self.current_char == '=':
-				tokens.append(Token(TT_EQ, pos_start=self.pos))
-				self.advance()
 			elif self.current_char == '(':
 				tokens.append(Token(TT_LPAREN, pos_start=self.pos))
 				self.advance()
 			elif self.current_char == ')':
 				tokens.append(Token(TT_RPAREN, pos_start=self.pos))
 				self.advance()
+			elif self.current_char == '!':
+				token, error = self.make_not_equals()
+				if error: return [], error
+				tokens.append(token)
+			elif self.current_char == '=':
+				tokens.append(self.make_equals())
+			elif self.current_char == '<':
+				tokens.append(self.make_less_than())
+			elif self.current_char == '>':
+				tokens.append(self.make_greater_than())
 			else:
 				pos_start = self.pos.copy()
 				char = self.current_char
@@ -200,10 +218,55 @@ class Lexer:
 			id_str += self.current_char
 			self.advance()
 
-		tok_type = TT_KEYWORD if id_str in KEYWORDS else TT_IDENTIFIER
+		tok_type = TT_LLAVE if id_str in PALABRAS_CLAVE else TT_IDENTIFIER
 		return Token(tok_type, id_str, pos_start, self.pos)
 
-####################################### NODES #######################################
+	def make_not_equals(self):
+		pos_start = self.pos.copy()
+		self.advance()
+
+		if self.current_char == '=':
+			self.advance()
+			return Token(TT_NE, pos_start=pos_start, pos_end=self.pos), None
+
+		self.advance()
+		return None, ExpectedCharError(pos_start, self.pos, "'=' (after '!')")
+	
+	def make_equals(self):
+		tok_type = TT_EQ
+		pos_start = self.pos.copy()
+		self.advance()
+
+		if self.current_char == '=':
+			self.advance()
+			tok_type = TT_EE
+
+		return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+
+	def make_less_than(self):
+		tok_type = TT_LT
+		pos_start = self.pos.copy()
+		self.advance()
+
+		if self.current_char == '=':
+			self.advance()
+			tok_type = TT_LTE
+
+		return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+
+	def make_greater_than(self):
+		tok_type = TT_GT
+		pos_start = self.pos.copy()
+		self.advance()
+
+		if self.current_char == '=':
+			self.advance()
+			tok_type = TT_GTE
+
+		return Token(tok_type, pos_start=pos_start, pos_end=self.pos)
+
+####################################### NODOS #######################################
+
 class NumberNode:
 	def __init__(self, tok):
 		self.tok = tok
@@ -252,7 +315,7 @@ class UnaryOpNode:
 	def __repr__(self):
 		return f'({self.op_tok}, {self.node})'
 
-####################################### PARSE RESULT #######################################
+####################################### PARSE RESULTADO #######################################
 
 class ParseResult:
 	def __init__(self):
@@ -296,12 +359,12 @@ class Parser:
 		if not res.error and self.current_tok.type != TT_EOF:
 			return res.failure(InvalidSyntaxError(
 				self.current_tok.pos_start, self.current_tok.pos_end,
-				"SE ESPERABA '+', '-', '*', '/' or '^'"
+				"Se esperaba '+', '-', '*', '/', '^', '==', '!=', '<', '>', <=', '>=', 'AND' or 'OR'"
 			))
 		return res
 
-	############## ANALIZADOR #####################
-
+############## ANALIZADOR  #####################
+#estan segun la gramatica utilizada en el lenguaje
 	def atom(self):
 		res = ParseResult()
 		tok = self.current_tok
@@ -328,12 +391,12 @@ class Parser:
 			else:
 				return res.failure(InvalidSyntaxError(
 					self.current_tok.pos_start, self.current_tok.pos_end,
-					"SE ESPERABA ')'"
+					"Se esperaba  ')'"
 				))
 
 		return res.failure(InvalidSyntaxError(
 			tok.pos_start, tok.pos_end,
-			"ESPERABA INT, FLOAT, IDENTIFICADOR, '+', '-' or '('"
+			"Se esperaba int, float, identifier, '+', '-', '('"
 		))
 
 	def power(self):
@@ -343,7 +406,7 @@ class Parser:
 		res = ParseResult()
 		tok = self.current_tok
 
-		if tok.type in (TT_SUMA, TT_RESTA):
+		if tok.type in (TT_SUMA, TT_MENOS):
 			res.register_advancement()
 			self.advance()
 			factor = res.register(self.factor())
@@ -355,17 +418,42 @@ class Parser:
 	def term(self):
 		return self.bin_op(self.factor, (TT_MUL, TT_DIV))
 
+	def arith_expr(self):
+		return self.bin_op(self.term, (TT_SUMA, TT_MENOS))
+
+	def comp_expr(self):
+		res = ParseResult()
+
+		if self.current_tok.matches(TT_LLAVE, 'NOT'):
+			op_tok = self.current_tok
+			res.register_advancement()
+			self.advance()
+
+			node = res.register(self.comp_expr())
+			if res.error: return res
+			return res.success(UnaryOpNode(op_tok, node))
+		
+		node = res.register(self.bin_op(self.arith_expr, (TT_EE, TT_NE, TT_LT, TT_GT, TT_LTE, TT_GTE)))
+		
+		if res.error:
+			return res.failure(InvalidSyntaxError(
+				self.current_tok.pos_start, self.current_tok.pos_end,
+				"Se esperaba int, float, identifier, '+', '-', '(' or 'NOT'"
+			))
+
+		return res.success(node)
+
 	def expr(self):
 		res = ParseResult()
 
-		if self.current_tok.matches(TT_KEYWORD, 'VAR'):
+		if self.current_tok.matches(TT_LLAVE, 'VAR'):
 			res.register_advancement()
 			self.advance()
 
 			if self.current_tok.type != TT_IDENTIFIER:
 				return res.failure(InvalidSyntaxError(
 					self.current_tok.pos_start, self.current_tok.pos_end,
-					"SE ESPERABA UN IDENTIFICADOR"
+					"Se esperaba un identificador"
 				))
 
 			var_name = self.current_tok
@@ -375,7 +463,7 @@ class Parser:
 			if self.current_tok.type != TT_EQ:
 				return res.failure(InvalidSyntaxError(
 					self.current_tok.pos_start, self.current_tok.pos_end,
-					"SE ESPERABA '='"
+					"Se esperaba '='"
 				))
 
 			res.register_advancement()
@@ -384,18 +472,18 @@ class Parser:
 			if res.error: return res
 			return res.success(VarAssignNode(var_name, expr))
 
-		node = res.register(self.bin_op(self.term, (TT_SUMA, TT_RESTA)))
+		node = res.register(self.bin_op(self.comp_expr, ((TT_LLAVE, 'AND'), (TT_LLAVE, 'OR'))))
 
 		if res.error:
 			return res.failure(InvalidSyntaxError(
 				self.current_tok.pos_start, self.current_tok.pos_end,
-				"SE ESPERABA 'VAR', int, float, identifier, '+', '-' or '('"
+				"Se esperaba 'VAR', int, float, identifier, '+', '-', '(' or 'NOT'"
 			))
 
 		return res.success(node)
 
 	###################################
-
+     #operaciones binarias
 	def bin_op(self, func_a, ops, func_b=None):
 		if func_b == None:
 			func_b = func_a
@@ -404,7 +492,7 @@ class Parser:
 		left = res.register(func_a())
 		if res.error: return res
 
-		while self.current_tok.type in ops:
+		while self.current_tok.type in ops or (self.current_tok.type, self.current_tok.value) in ops:
 			op_tok = self.current_tok
 			res.register_advancement()
 			self.advance()
@@ -449,17 +537,15 @@ class Number:
 	def set_context(self, context=None):
 		self.context = context
 		return self
-		
-## metodos para operar los numeros
-	#adicion
+    #adicion
 	def added_to(self, other):
 		if isinstance(other, Number):
 			return Number(self.value + other.value).set_context(self.context), None
-    # sustraccion
+    #sustraccion
 	def subbed_by(self, other):
 		if isinstance(other, Number):
 			return Number(self.value - other.value).set_context(self.context), None
-    #multiplicacion
+    #multiplicacion 
 	def multed_by(self, other):
 		if isinstance(other, Number):
 			return Number(self.value * other.value).set_context(self.context), None
@@ -469,15 +555,50 @@ class Number:
 			if other.value == 0:
 				return None, RTError(
 					other.pos_start, other.pos_end,
-					'Division por cero',
+					'Division by zero',
 					self.context
 				)
 
 			return Number(self.value / other.value).set_context(self.context), None
-
+    #potencia
 	def powed_by(self, other):
 		if isinstance(other, Number):
 			return Number(self.value ** other.value).set_context(self.context), None
+    #comparacion igual a
+	def get_comparison_eq(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value == other.value)).set_context(self.context), None
+    # comparacion diferente de 
+	def get_comparison_ne(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value != other.value)).set_context(self.context), None
+    #comparacion menor que 
+	def get_comparison_lt(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value < other.value)).set_context(self.context), None
+    #comparacion mayor que 
+	def get_comparison_gt(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value > other.value)).set_context(self.context), None
+    #comparacion menor o igual que 
+	def get_comparison_lte(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value <= other.value)).set_context(self.context), None
+    # comparacion mayor o igual que 
+	def get_comparison_gte(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value >= other.value)).set_context(self.context), None
+    # && AND
+	def anded_by(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value and other.value)).set_context(self.context), None
+    # | OR
+	def ored_by(self, other):
+		if isinstance(other, Number):
+			return Number(int(self.value or other.value)).set_context(self.context), None
+
+	def notted(self):
+		return Number(1 if self.value == 0 else 0).set_context(self.context), None
 
 	def copy(self):
 		copy = Number(self.value)
@@ -488,7 +609,7 @@ class Number:
 	def __repr__(self):
 		return str(self.value)
 
-####################################### CONTEXTO #######################################	
+####################################### CONTEXTO #######################################
 # el objtivo de esta clase es detectar cuando se esta trabajando con una funcion y cuando se esta trabajando en todo el programa
 class Context:
 	def __init__(self, display_name, parent=None, parent_entry_pos=None):
@@ -497,7 +618,8 @@ class Context:
 		self.parent_entry_pos = parent_entry_pos
 		self.symbol_table = None
 
-############################### DICCIONARIO DE SIMBOLOS ###################################
+####################################### TABLA DE SIMBOLOS #######################################
+
 class SymbolTable:
 	def __init__(self):
 		self.symbols = {}
@@ -515,8 +637,8 @@ class SymbolTable:
 	def remove(self, name):
 		del self.symbols[name]
 
-####################################### INTERPRETE #######################################	
-#crear una clase interprete 
+####################################### INTERPRETE #######################################
+
 class Interpreter:
 	def visit(self, node, context):
 		method_name = f'visit_{type(node).__name__}'
@@ -541,7 +663,7 @@ class Interpreter:
 		if not value:
 			return res.failure(RTError(
 				node.pos_start, node.pos_end,
-				f"'{var_name}' no definido",
+				f"'{var_name}' is not defined",
 				context
 			))
 
@@ -566,7 +688,7 @@ class Interpreter:
 
 		if node.op_tok.type == TT_SUMA:
 			result, error = left.added_to(right)
-		elif node.op_tok.type == TT_RESTA:
+		elif node.op_tok.type == TT_MENOS:
 			result, error = left.subbed_by(right)
 		elif node.op_tok.type == TT_MUL:
 			result, error = left.multed_by(right)
@@ -574,6 +696,22 @@ class Interpreter:
 			result, error = left.dived_by(right)
 		elif node.op_tok.type == TT_POT:
 			result, error = left.powed_by(right)
+		elif node.op_tok.type == TT_EE:
+			result, error = left.get_comparison_eq(right)
+		elif node.op_tok.type == TT_NE:
+			result, error = left.get_comparison_ne(right)
+		elif node.op_tok.type == TT_LT:
+			result, error = left.get_comparison_lt(right)
+		elif node.op_tok.type == TT_GT:
+			result, error = left.get_comparison_gt(right)
+		elif node.op_tok.type == TT_LTE:
+			result, error = left.get_comparison_lte(right)
+		elif node.op_tok.type == TT_GTE:
+			result, error = left.get_comparison_gte(right)
+		elif node.op_tok.matches(TT_LLAVE, 'AND'):
+			result, error = left.anded_by(right)
+		elif node.op_tok.matches(TT_LLAVE, 'OR'):
+			result, error = left.ored_by(right)
 
 		if error:
 			return res.failure(error)
@@ -587,18 +725,22 @@ class Interpreter:
 
 		error = None
 
-		if node.op_tok.type == TT_RESTA:
+		if node.op_tok.type == TT_MENOS:
 			number, error = number.multed_by(Number(-1))
+		elif node.op_tok.matches(TT_LLAVE, 'NOT'):
+			number, error = number.notted()
 
 		if error:
 			return res.failure(error)
 		else:
 			return res.success(number.set_pos(node.pos_start, node.pos_end))
 
-####################################### CORRER #######################################
+####################################### EJECUCION #######################################
 #TABLA DE SIMBOLOS GLOBAL 
 global_symbol_table = SymbolTable()
-global_symbol_table.set("null", Number(0))
+global_symbol_table.set("NULL", Number(0))
+global_symbol_table.set("FALSE", Number(0))
+global_symbol_table.set("TRUE", Number(1))
 
 def run(fn, text):
 	# generacion de tokens
