@@ -100,6 +100,10 @@ TT_GT = 'GT' # mayor >
 TT_LTE = 'LTE' # menor igual <=
 TT_GTE = 'GTE' # mayor igual >=
 TT_EOF = 'EOF' # fin de linea como una bandera 
+#token para cadenas 
+TT_STRING = 'STRING'
+
+
 
 PALABRAS_CLAVE = [
 	'VAR', #para variables
@@ -164,6 +168,10 @@ class Lexer:
 			# identificar si son letras
 			elif self.current_char in LETRAS:
 				tokens.append(self.make_identifier())
+            #para diferenciar cadenas
+			elif self.current_char == '"':
+				tokens.append(self.make_string())
+			
 			elif self.current_char == '+':
 				tokens.append(Token(TT_SUMA, pos_start=self.pos))
 				self.advance()
@@ -220,7 +228,32 @@ class Lexer:
 			return Token(TT_INT, int(num_str), pos_start, self.pos)
 		else:
 			return Token(TT_FLOAT, float(num_str), pos_start, self.pos)
+    #para trabajar con string
+	
+	def make_string(self):
+		string = ''
+		pos_start = self.pos.copy()
+		escape_character = False
+		self.advance()
 
+		escape_characters = {
+			'n': '\n',
+			't': '\t'
+		}
+
+		while self.current_char != None and (self.current_char != '"' or escape_character):
+			if escape_character:
+				string += escape_characters.get(self.current_char, self.current_char)
+			else:
+				if self.current_char == '\\':
+					escape_character = True
+				else:
+					string += self.current_char
+			self.advance()
+			escape_character = False
+		
+		self.advance()
+		return Token(TT_STRING, string, pos_start, self.pos)
 	def make_identifier(self):
 		id_str = ''
 		pos_start = self.pos.copy()
@@ -241,7 +274,7 @@ class Lexer:
 			return Token(TT_NE, pos_start=pos_start, pos_end=self.pos), None
 
 		self.advance()
-		return None, ExpectedCharError(pos_start, self.pos, "'=' (after '!')")
+		return None, ExpectedCharError(pos_start, self.pos, "'=' (despues '!')")
 	
 	def make_equals(self):
 		tok_type = TT_EQ
@@ -279,6 +312,16 @@ class Lexer:
 ####################################### NODOS #######################################
 
 class NumberNode:
+	def __init__(self, tok):
+		self.tok = tok
+
+		self.pos_start = self.tok.pos_start
+		self.pos_end = self.tok.pos_end
+
+	def __repr__(self):
+		return f'{self.tok}'
+
+class StringNode:
 	def __init__(self, tok):
 		self.tok = tok
 
@@ -568,6 +611,14 @@ class Parser:
 			res.register_advancement()
 			self.advance()
 			return res.success(NumberNode(tok))
+        
+
+		if tok.type in (TT_STRING):
+			res.register_advancement()
+			self.advance()
+			return res.success(StringNode(tok))
+
+
 
 		elif tok.type == TT_IDENTIFIER:
 			res.register_advancement()
@@ -732,7 +783,78 @@ class RTResult:
 		return self
 
 ####################################### EVALUAR NUMEROS #######################################
+class Value:
+	def __init__(self):
+		self.set_pos()
+		self.set_context()
 
+	def set_pos(self, pos_start=None, pos_end=None):
+		self.pos_start = pos_start
+		self.pos_end = pos_end
+		return self
+
+	def set_context(self, context=None):
+		self.context = context
+		return self
+
+	def added_to(self, other):
+		return None, self.illegal_operation(other)
+
+	def subbed_by(self, other):
+		return None, self.illegal_operation(other)
+
+	def multed_by(self, other):
+		return None, self.illegal_operation(other)
+
+	def dived_by(self, other):
+		return None, self.illegal_operation(other)
+
+	def powed_by(self, other):
+		return None, self.illegal_operation(other)
+
+	def get_comparison_eq(self, other):
+		return None, self.illegal_operation(other)
+
+	def get_comparison_ne(self, other):
+		return None, self.illegal_operation(other)
+
+	def get_comparison_lt(self, other):
+		return None, self.illegal_operation(other)
+
+	def get_comparison_gt(self, other):
+		return None, self.illegal_operation(other)
+
+	def get_comparison_lte(self, other):
+		return None, self.illegal_operation(other)
+
+	def get_comparison_gte(self, other):
+		return None, self.illegal_operation(other)
+
+	def anded_by(self, other):
+		return None, self.illegal_operation(other)
+
+	def ored_by(self, other):
+		return None, self.illegal_operation(other)
+
+	def notted(self):
+		return None, self.illegal_operation(other)
+
+	def execute(self, args):
+		return RTResult().failure(self.illegal_operation())
+
+	def copy(self):
+		raise Exception('Metodo no definido')
+
+	def is_true(self):
+		return False
+
+	def illegal_operation(self, other=None):
+		if not other: other = self
+		return RTError(
+			self.pos_start, other.pos_end,
+			'Operacion Ilegal',
+			self.context
+		)
 class Number:
 	def __init__(self, value):
 		self.value = value
@@ -747,6 +869,9 @@ class Number:
 	def set_context(self, context=None):
 		self.context = context
 		return self
+
+
+
     #adicion
 	def added_to(self, other):
 		if isinstance(other, Number):
@@ -765,7 +890,7 @@ class Number:
 			if other.value == 0:
 				return None, RTError(
 					other.pos_start, other.pos_end,
-					'Division by zero',
+					'Division entre 0',
 					self.context
 				)
 
@@ -810,6 +935,14 @@ class Number:
 	def notted(self):
 		return Number(1 if self.value == 0 else 0).set_context(self.context), None
     
+	def illegal_operation(self, other=None):
+		if not other: other = self
+		return RTError(
+			self.pos_start, other.pos_end,
+			'Operacion Ilegal',
+			self.context
+		)
+
 	def is_true(self):
 		return self.value != 0
 
@@ -821,6 +954,35 @@ class Number:
 	
 	def __repr__(self):
 		return str(self.value)
+    
+class String(Value):
+	def __init__(self, value):
+		super().__init__()
+		self.value = value
+
+	def added_to(self, other):
+		if isinstance(other, String):
+			return String(self.value + other.value).set_context(self.context), None
+		else:
+			return None, Value.illegal_operation(self, other)
+
+	def multed_by(self, other):
+		if isinstance(other, Number):
+			return String(self.value * other.value).set_context(self.context), None
+		else:
+			return None, Value.illegal_operation(self, other)
+
+	def is_true(self):
+		return len(self.value) > 0
+
+	def copy(self):
+		copy = String(self.value)
+		copy.set_pos(self.pos_start, self.pos_end)
+		copy.set_context(self.context)
+		return copy
+
+	def __repr__(self):
+		return f'"{self.value}"'
 
 ####################################### CONTEXTO #######################################
 # el objtivo de esta clase es detectar cuando se esta trabajando con una funcion y cuando se esta trabajando en todo el programa
@@ -866,6 +1028,11 @@ class Interpreter:
 	def visit_NumberNode(self, node, context):
 		return RTResult().success(
 			Number(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end)
+		)
+    
+	def visit_StringNode(self, node, context):
+		return RTResult().success(
+			String(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end)
 		)
 
 	def visit_VarAccessNode(self, node, context):
