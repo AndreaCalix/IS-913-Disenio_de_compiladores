@@ -20,3 +20,14 @@ CADA VEZ QUE SE REALIZAN CAMBIOS EN LA GRAMATICA SE DEBEN REALIZAR CAMBIOS EN EL
 EL LENGUAJE PUEDE CUENTA CON PALABRAS RESERVADAS COMO SER: VAR, OR, AND, NOT
 
 
+Agregar IF, FOR, WHILE requisito de bucles de repiticion
+funciona de la siguiente manera
+
+
+PLABRA CLAVE <condicion> PLABRA CLAVE <expresion>
+       IF     <condicion>      THEN   <expresion> 
+       ELIF 
+       ELSE
+
+       VAR age = 27
+       VAR price = IF age >= 18 THEN 40 ELSE
