@@ -31,3 +31,10 @@ PLABRA CLAVE <condicion> PLABRA CLAVE <expresion>
 
        VAR age = 27
        VAR price = IF age >= 18 THEN 40 ELSE
+
+////// SETENCIA FOR Y WHILE 
+cumple el requerimiento de repeticion
+
+FOR 
+FOR <var_name> = <start_value> TO <end_value> THEN <expr>
+
