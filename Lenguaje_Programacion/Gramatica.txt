@@ -1,16 +1,36 @@
-###################################3####  GRAMATICA ###############################################
-
-exp : PALABRA_CLAVE : VAR IDENT IGUAL expr  \\\\\\\ variables
-exp : term((SUMA|MENOS) term)*
-term : factor((MULT|DIV)) factor)*
-
-factor : (SUMA|RESTA) factor
-pot : atom (POT factor)*
-
-atom : INT|FLOAT|IDENT
-atom : LPAREN expr RPAREN
+#######################################  GRAMATICA ###############################################
 
 ####################################################################################################
 
 NOTA>>>> la gramatica pasa al analizador para poder ser interpretada 
 >>>>>>>> la asignacion de variables tendra la menos prioridad
+
+expr: PALABRA_CLAVE:VAR IDENTIFIER EQ expr
+expr: comp-expr ((KEYWORD:AND|KEYWORD:OR) comp-expr)*
+
+comp-expr: NOT comp-expr
+comp-expr: arith-expr ((EE|LT|GT|LTE|GTE) arith-expr)*
+
+arith-expr:	term ((SUMA|RESTA) term)*
+
+term: factor ((MUL|DIV) factor)*
+
+factor: (SUMA|RESTA) factor
+factor: power
+
+power: atomn (POT factor)*
+
+atom: INT|FLOAT|STRING|IDENTIFIER
+	: LPAREN expr RPAREN
+	: if-expr
+	: for-expr
+	: while-expr
+			
+if-expr: PALABRA_CLAVE:IF expr PALABRA_CLAVE:THEN expr
+		 (PALABRA_CLAVE:ELIF expr PALABRA_CLAVE:THEN expr)*
+		 (PALABRA_CLAVE:ELSE expr)
+
+for-expr: PALABRA_CLAVE:FOR IDENTIFIER EQ expr PALABRA_CLAVE:TO expr 
+		  (PALABRA_CLAVE:STEP expr) PALABRA_CLAVE:THEN expr
+
+while-expr: PALABRA_CLAVE:WHILE expr PALABRA_CLAVE:THEN expr
