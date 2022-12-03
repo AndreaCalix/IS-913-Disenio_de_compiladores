@@ -6,7 +6,7 @@ NOTA>>>> la gramatica pasa al analizador para poder ser interpretada
 >>>>>>>> la asignacion de variables tendra la menos prioridad
 
 expr: PALABRA_CLAVE:VAR IDENTIFIER EQ expr
-expr: comp-expr ((KEYWORD:AND|KEYWORD:OR) comp-expr)*
+expr: comp-expr ((PALABRA_CLAVE:AND|PALABRA_CLAVE:OR) comp-expr)*
 
 comp-expr: NOT comp-expr
 comp-expr: arith-expr ((EE|LT|GT|LTE|GTE) arith-expr)*

@@ -144,6 +144,8 @@ class Token:
 		return f'{self.type}'
 
 ####################################### LEXER #######################################
+
+
 class Lexer:
 	def __init__(self, fn, text): #en el metodo de inicializacion debemos tomar el texto que estemos procesando
 		self.fn = fn
@@ -157,7 +159,8 @@ class Lexer:
 		self.current_char = self.text[self.pos.idx] if self.pos.idx < len(self.text) else None
     #metodo para generar tokens
 	def make_tokens(self):
-		tokens = []
+		#este metodo crea una lista vacia de tokens para luego devolverlos
+		tokens = [] 
 
 		while self.current_char != None:
 			if self.current_char in ' \t': #ignora los espacios vacios y tabulaciones
@@ -254,6 +257,7 @@ class Lexer:
 		
 		self.advance()
 		return Token(TT_STRING, string, pos_start, self.pos)
+	
 	def make_identifier(self):
 		id_str = ''
 		pos_start = self.pos.copy()
@@ -345,7 +349,7 @@ class VarAssignNode:
 
 		self.pos_start = self.var_name_tok.pos_start
 		self.pos_end = self.value_node.pos_end
-
+#operaciones binarias
 class BinOpNode:
 	def __init__(self, left_node, op_tok, right_node):
 		self.left_node = left_node
@@ -357,7 +361,7 @@ class BinOpNode:
 
 	def __repr__(self):
 		return f'({self.left_node}, {self.op_tok}, {self.right_node})'
-
+#opreaciones de un solo numero
 class UnaryOpNode:
 	def __init__(self, op_tok, node):
 		self.op_tok = op_tok
@@ -855,6 +859,7 @@ class Value:
 			'Operacion Ilegal',
 			self.context
 		)
+####################### NUMER ###################################
 class Number:
 	def __init__(self, value):
 		self.value = value
@@ -869,9 +874,6 @@ class Number:
 	def set_context(self, context=None):
 		self.context = context
 		return self
-
-
-
     #adicion
 	def added_to(self, other):
 		if isinstance(other, Number):
@@ -1198,7 +1200,7 @@ def run(fn, text):
 	ast = parser.parse()
 	if ast.error: return None, ast.error
 
-	#correr el interprete 
+	#correr el interprete, instancia del interprete 
 	interpreter = Interpreter()
 	context = Context('<PROGRAMA>')
 	context.symbol_table = global_symbol_table
